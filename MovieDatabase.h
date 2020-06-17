@@ -5,7 +5,7 @@
 
 typedef struct MovieNode MovieNode;
 
-struct MovieDatabase
+struct MovieNode
 {
     MovieNode* head;
     Movie      movie;
