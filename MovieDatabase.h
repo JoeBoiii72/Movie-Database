@@ -32,6 +32,7 @@ MovieDatabase* createMovieDatabase();
 void           freeMovieDataBase(MovieDatabase* mdb);
 void           printMovieDataBase(MovieDatabase* mdb);
 void           sortMovieDatabase(MovieDatabase *mdb);
+MovieDatabase* isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*));
 void           addMovie(MovieDatabase* mdb, Movie* movie);
 Movie*         getMovie(MovieDatabase* mdb, int index);
 

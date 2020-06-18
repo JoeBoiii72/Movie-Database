@@ -26,6 +26,11 @@ void testAdd(MovieDatabase* mdb, int movies)
     }
 }
 
+int only_2000_or_larger(Movie* movie)
+{
+    return (getYear(movie) > 2000);
+}
+
 int main()
 {
     MovieDatabase* mdb = createMovieDatabase();
@@ -34,9 +39,13 @@ int main()
 
     sortMovieDatabase(mdb);
 
-    printMovieDataBase(mdb);
+    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, only_2000_or_larger);
 
     freeMovieDataBase(mdb);
+
+    printMovieDataBase(new_mdb);
+
+    freeMovieDataBase(new_mdb);
 
     return 0;
 }

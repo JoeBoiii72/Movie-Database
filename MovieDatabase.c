@@ -11,7 +11,8 @@ $Notice: $
 #include "MovieDatabase.h"
 #include "Movie.h"
 
-MovieDatabase* createMovieDatabase()
+MovieDatabase*
+createMovieDatabase()
 {
     MovieDatabase* mdb = (MovieDatabase*)malloc(sizeof(MovieDatabase));
     mdb->head = (MovieNode*)malloc(sizeof(MovieNode));
@@ -19,13 +20,15 @@ MovieDatabase* createMovieDatabase()
     return mdb;
 }
 
-static void freeNode(MovieNode* n)
+static void
+freeNode(MovieNode* n)
 {
     freeMovie(n->movie);
     free(n);
 }
 
-void freeMovieDataBase(MovieDatabase* mdb)
+void
+freeMovieDataBase(MovieDatabase* mdb)
 {
     MovieNode* p = mdb->head;
 
@@ -35,11 +38,13 @@ void freeMovieDataBase(MovieDatabase* mdb)
         freeNode(p);
         p = next;
     }
+    free(mdb);
 
     printf("Movie Database deleted\n", mdb->size);
 }
 
-void printMovieDataBase(MovieDatabase* mdb)
+void
+printMovieDataBase(MovieDatabase* mdb)
 {
     MovieNode* p = mdb->head;
 
@@ -54,7 +59,8 @@ void printMovieDataBase(MovieDatabase* mdb)
     printf("--------\n");
 }
 
-void addMovie(MovieDatabase* mdb, Movie* movie)
+void
+addMovie(MovieDatabase* mdb, Movie* movie)
 {
     MovieNode* n = (MovieNode*)malloc(sizeof(MovieNode));
     n->next  = mdb->head;
@@ -63,7 +69,8 @@ void addMovie(MovieDatabase* mdb, Movie* movie)
     mdb->size++;
 }
 
-Movie* getMovie(MovieDatabase* mdb, int index)
+Movie*
+getMovie(MovieDatabase* mdb, int index)
 {
     if(index >= mdb->size)
         return 0;
@@ -80,22 +87,44 @@ Movie* getMovie(MovieDatabase* mdb, int index)
     return p->movie;
 }
 
-
-static int compareFunction(MovieNode* p1, MovieNode* p2)
+MovieDatabase*
+isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*))
 {
-    if(p1->movie->year > p2->movie->year)
-        return 1;
-    return 0;
+    MovieDatabase* new_mdb = createMovieDatabase();
+
+    MovieNode* p = mdb->head;
+    while(p->next)
+    {
+        if(comp(p->movie) != 0)
+        {
+            // so new_mdb doesnt rely on old one
+            Movie* new_movie = createMovieCopy(p->movie);
+            addMovie(new_mdb, new_movie);
+        }
+            
+
+        p = p->next;
+    }
+    return new_mdb;
 }
 
-static void swapNodes(MovieNode* p1, MovieNode* p2) 
+
+static int
+compareFunction(MovieNode* p1, MovieNode* p2)
+{
+    return(p1->movie->year > p2->movie->year);
+}
+
+static void
+swapNodes(MovieNode* p1, MovieNode* p2) 
 { 
     Movie* movie = p1->movie;
     p1->movie = p2->movie; 
     p2->movie = movie;
 } 
 
-void sortMovieDatabase(MovieDatabase *mdb)
+void
+sortMovieDatabase(MovieDatabase *mdb)
 { 
     MovieNode* curr = mdb->head;
     MovieNode* next;
@@ -106,7 +135,7 @@ void sortMovieDatabase(MovieDatabase *mdb)
 
         while(next->next)
         {
-            if (compareFunction(curr, next) > 0)
+            if (compareFunction(curr, next)!=0)
             {
                 swapNodes(next, curr);
             }

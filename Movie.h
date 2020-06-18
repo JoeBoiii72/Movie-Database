@@ -22,6 +22,7 @@ struct Movie
 };
 
 Movie* createMovie(char* title, int year, char* genre, float rating);
+Movie* createMovieCopy(Movie* srcMovie);
 void   freeMovie(Movie* movie);
 char*  getTitle(Movie* movie);
 int    getYear(Movie* movie);
