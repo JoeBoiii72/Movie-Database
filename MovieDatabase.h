@@ -21,6 +21,7 @@ struct MovieNode
 MovieDatabase* createMovieDatabase();
 void           freeMovieDataBase(MovieDatabase* mdb);
 void           printMovieDataBase(MovieDatabase* mdb);
+void           sortMovieDatabase(MovieDatabase *mdb);
 void           addMovie(MovieDatabase* mdb, Movie* movie);
 Movie*         getMovie(MovieDatabase* mdb, int index);
 

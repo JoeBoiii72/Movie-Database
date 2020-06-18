@@ -1,11 +1,7 @@
 #ifndef __MOVIE_H__
 #define __MOVIE_H__
 
-
 typedef struct Movie Movie;
-
-#define MAX_GENRE 80
-#define MAX_TITLE 80
 
 struct Movie
 {

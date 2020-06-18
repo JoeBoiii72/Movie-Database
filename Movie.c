@@ -5,8 +5,8 @@ Movie* createMovie(char* title, int year, char* genre, float rating)
 {
     Movie* movie = malloc(sizeof(movie)); 
     movie->year = year;
-    movie->title = (char*)malloc(80 * sizeof(char));
-    movie->genre = (char*)malloc(80 * sizeof(char));
+    movie->title = (char*)malloc((strlen(title)*sizeof(char))+1);
+    movie->genre = (char*)malloc((strlen(title)*sizeof(char))+1);
     strcpy(movie->title, title);
     strcpy(movie->genre, genre);
     movie->rating = rating;
