@@ -11,35 +11,21 @@ $Notice: $
 #include "Movie.h"
 #include "MovieDatabase.h"
 
-int randInt(int lower, int upper) 
-{ 
-    return (rand() % (upper - lower + 1)) + lower;
-} 
-
-void testAdd(MovieDatabase* mdb, int movies)
+int only_2010_or_larger(Movie* movie)
 {
-    srand(time(0));
-    for(int i = 0; i < movies; i++)
-    {
-        Movie* m1 = createMovie("hello", randInt(1990, 2020) , "PORN", 5.0);
-        addMovie(mdb, m1); 
-    }
-}
-
-int only_2000_or_larger(Movie* movie)
-{
-    return (getYear(movie) > 2000);
+    return (getYear(movie) >= 2010);
 }
 
 int main()
 {
+
     MovieDatabase* mdb = createMovieDatabase();
 
-    testAdd(mdb, 10);
+    addMoviesFromFile(mdb, "films.txt");
 
     sortMovieDatabase(mdb);
 
-    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, only_2000_or_larger);
+    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, only_2010_or_larger);
 
     freeMovieDataBase(mdb);
 

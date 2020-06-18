@@ -10,6 +10,8 @@ $Notice: $
 
 #include "MovieDatabase.h"
 #include "Movie.h"
+#include <stdio.h>
+#include <string.h>
 
 MovieDatabase*
 createMovieDatabase()
@@ -19,6 +21,49 @@ createMovieDatabase()
     mdb->size = 0;
     return mdb;
 }
+
+
+
+void addMoviesFromFile(MovieDatabase* mdb, const char* fileName)
+{
+	FILE* f;
+    
+    f = fopen(fileName, "r");
+
+    if (f == NULL)
+        exit(1);
+
+    // buffer to store each line
+	char* line = malloc(sizeof(char) * 120);
+
+	// intialbuffer size
+    size_t ibSize;
+
+    // size of line read
+    size_t length;
+
+	while ((length = getline(&line, &ibSize, f)) != -1)
+    {
+        char* token = strtok(line, "\"");
+        char* title = token;
+        token = strtok(NULL, ",");
+        int year = atoi(token);
+        token = strtok(NULL, ",");
+        char* cert = token;
+        token = strtok(NULL, ",");
+        char* genre = token;
+        token = strtok(NULL, ",");
+        int duration = atoi(token);
+        token = strtok(NULL, ",");
+        float rating = atoi(token);
+
+        addMovie(mdb, createMovie(title, year, genre, rating));
+	}
+
+	free(line);
+	fclose(f);
+}
+
 
 static void
 freeNode(MovieNode* n)
@@ -101,8 +146,6 @@ isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*))
             Movie* new_movie = createMovieCopy(p->movie);
             addMovie(new_mdb, new_movie);
         }
-            
-
         p = p->next;
     }
     return new_mdb;

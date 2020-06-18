@@ -12,6 +12,7 @@ $Notice: $
 #define __MOVIEDATABASE_H__
 
 #include "Movie.h"
+#include <stdio.h>
 
 typedef struct MovieNode MovieNode;
 typedef struct MovieDatabase MovieDatabase;
@@ -29,6 +30,7 @@ struct MovieNode
 };
 
 MovieDatabase* createMovieDatabase();
+void           addMoviesFromFile(MovieDatabase* mdb, const char* fileName);
 void           freeMovieDataBase(MovieDatabase* mdb);
 void           printMovieDataBase(MovieDatabase* mdb);
 void           sortMovieDatabase(MovieDatabase *mdb);
