@@ -1,17 +1,19 @@
 #include "Movie.h"
 
 
-Movie createMovie(String title, int year, String genre, float rating)
+Movie* createMovie(char* title, int year, char* genre, float rating)
 {
-    Movie movie;
-    movie.title = title;
-    movie.year = year;
-    movie.genre = genre;
-    movie.rating = rating;
+    Movie* movie = malloc(sizeof(movie)); 
+    movie->year = year;
+    movie->title = (char*)malloc(80 * sizeof(char));
+    movie->genre = (char*)malloc(80 * sizeof(char));
+    strcpy(movie->title, title);
+    strcpy(movie->genre, genre);
+    movie->rating = rating;
     return movie;
 }
 
-String getTitle(Movie* movie)
+char* getTitle(Movie* movie)
 {
     return movie->title;
 }
@@ -21,7 +23,7 @@ int getYear(Movie* movie)
     return movie->genre;
 }
 
-String getGenre(Movie* movie)
+char* getGenre(Movie* movie)
 {
     return movie->genre;
 }
@@ -33,8 +35,11 @@ float getRating(Movie* movie)
 
 void printMovie(Movie* movie)
 {
-    printf("%s,"  , movie->title);
-    printf("%d,"  , movie->year);
-    printf("%s,"  , movie->genre);
-    printf("%f\n" , movie->rating);
+    if(movie)
+    {
+        printf("%s,"  , movie->title);
+        printf("%d,"  , movie->year);
+        printf("%s,"  , movie->genre);
+        printf("%f\n" , movie->rating);
+    }
 }
