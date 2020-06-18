@@ -5,10 +5,10 @@ typedef struct Movie Movie;
 
 struct Movie
 {
-    char* title;  
     int year;
-    char* genre;
     float rating;
+    char* title;
+    char* genre;
 };
 
 Movie* createMovie(char* title, int year, char* genre, float rating);

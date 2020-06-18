@@ -3,12 +3,15 @@
 
 Movie* createMovie(char* title, int year, char* genre, float rating)
 {
-    Movie* movie = malloc(sizeof(movie)); 
-    movie->year = year;
-    movie->title = (char*)malloc((strlen(title)*sizeof(char))+1);
-    movie->genre = (char*)malloc((strlen(title)*sizeof(char))+1);
+    Movie* movie = malloc(sizeof(movie));
+
+    movie->title = malloc(sizeof(char) * (strlen(title)+1));
+    movie->genre = malloc(sizeof(char) * (strlen(genre)+1));
+
     strcpy(movie->title, title);
     strcpy(movie->genre, genre);
+
+    movie->year = year;
     movie->rating = rating;
     return movie;
 }
@@ -31,6 +34,13 @@ char* getGenre(Movie* movie)
 float getRating(Movie* movie)
 {
     return movie->rating;
+}
+
+void freeMovie(Movie* movie)
+{
+    free(movie->title);
+    free(movie->genre);
+    free(movie);
 }
 
 void printMovie(Movie* movie)
