@@ -1,3 +1,13 @@
+/*  
+=======================================
+$File: MovieDatabase.h $
+$Date: 18/06/2020 $
+$Revision: 0.5 $
+$Creator: Joe Kenyon $
+$Notice: $
+=======================================
+*/
+
 #ifndef __MOVIEDATABASE_H__
 #define __MOVIEDATABASE_H__
 

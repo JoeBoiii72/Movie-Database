@@ -1,5 +1,14 @@
-#include "Movie.h"
+/*  
+=======================================
+$File: Movie.c $
+$Date: 18/06/2020 $
+$Revision: 0.5 $
+$Creator: Joe Kenyon $
+$Notice: $
+=======================================
+*/
 
+#include "Movie.h"
 
 Movie* createMovie(char* title, int year, char* genre, float rating)
 {
