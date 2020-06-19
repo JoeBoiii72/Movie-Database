@@ -17,7 +17,8 @@ $Notice: $
 
 struct MovieDatabase
 {
-    LinkedList list;
+    size_t size;
+    node_t* head;
 };
 
 typedef struct MovieDatabase MovieDatabase;
@@ -26,9 +27,10 @@ MovieDatabase* createMovieDatabase();
 void           addMoviesFromFile(MovieDatabase* mdb, const char* fileName);
 void           freeMovieDatabase(MovieDatabase* mdb);
 void           printMovieDatabase(MovieDatabase* mdb);
-void           sortMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*, Movie*));
+void           sortMovieDatabase(MovieDatabase *mdb, int(*comp)(void*, void*));
 MovieDatabase* isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*));
 void           addMovie(MovieDatabase* mdb, Movie* movie);
-Movie*         getMovie(MovieDatabase* mdb, int index);
+Movie*         getMovieByIndex(MovieDatabase* mdb, int index);
+void           removeMovies(MovieDatabase *mdb, int(*comp)(Movie*));
 
 #endif

@@ -11,69 +11,85 @@ $Notice: $
 #include "Movie.h"
 #include "MovieDatabase.h"
 
-int only_film_noir(Movie* movie)
+int if_film_noir(Movie* movie)
 {
     return strstr(getGenre(movie), "Film-Noir");
 }
 
-int sortByDuration(Movie* movie1, Movie* movie2)
-{
-    return (getDuration(movie1) < getDuration(movie2));
+int if_R_rated(Movie* movie)
+{    
+    return !(strcmp(getCertificate(movie), "R"));
 }
 
-int sortByTitleLength(Movie* movie1, Movie* movie2)
+int sortByDuration(void* p1, void* p2)
 {
-    return (strlen(getTitle(movie1)) > strlen(getTitle(movie2)));
+    Movie* m1 = (Movie*)p1;
+    Movie* m2 = (Movie*)p2;
+    return (getDuration(m1) < getDuration(m2));
+}
+
+int sortByTitleLength(void* p1, void* p2)
+{
+    Movie* m1 = (Movie*)p1;
+    Movie* m2 = (Movie*)p2;
+    return (strlen(getTitle(m1)) > strlen(getTitle(m2)));
 }
 
 /*
 Sort the movies in chronological order and display on the console.
 */
-void task1()
+void task1(MovieDatabase* mdb)
 {
+    sortMovieDatabase(mdb, NULL);
+    printMovieDatabase(mdb);
+    printf("\n");
 }
 
 /*
 Display the third longest Film-Noir
 */
-void task2()
+void task2(MovieDatabase* mdb)
 {
+    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, if_film_noir);
+    sortMovieDatabase(new_mdb, sortByDuration);
+    printMovie(getMovieByIndex(new_mdb, 2));
+    printf("\n");
 }
 
 /*
 Find the film with the shortest title.
 */
-void task3()
+void task3(MovieDatabase* mdb)
 {
+    sortMovieDatabase(mdb, sortByTitleLength);
+    printMovie(getMovieByIndex(mdb, 0));
+    printf("\n");
 }
 
 /*
 After deleting all R rated films from the database, display the number of
 films left in the database
 */
-void task4()
+void task4(MovieDatabase* mdb)
 {
+    printf("Movies left BEFORE deletion -> %d\n", mdb->size);
+    removeMovies(mdb, if_R_rated);
+    printf("Movies left AFTER deletion -> %d\n", mdb->size);
+    printf("\n");
 }
 
 int main()
-{
+{    
     MovieDatabase* mdb = createMovieDatabase();
 
     addMoviesFromFile(mdb, "films.txt");
 
-    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, only_film_noir);
-
-    printMovieDatabase(new_mdb);
-
-    sortMovieDatabase(new_mdb, NULL);
-
-    printf("------------------\n");
-
-    printMovieDatabase(new_mdb);
+    task1(mdb);
+    task2(mdb);
+    task3(mdb);
+    task4(mdb);
 
     freeMovieDatabase(mdb);
-
-    freeMovieDatabase(new_mdb);
 
     return 0;
 }

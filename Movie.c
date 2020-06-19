@@ -11,13 +11,23 @@ $Notice: $
 #include "Movie.h"
 #define PRINTLINE() printf("file: %s, line: %d\n",__FILE__, __LINE__ )
 
+static void
+strip(char *string)
+{
+    int size = strlen(string);
+    memmove(string, string+1, size-2);
+    string[size-2] = 0;
+}
 
 // constructor
 Movie* 
-createMovie(char* title, int year, char* genre, int rating, int duration, char* certi)
+createMovie(char* title, int year, char* genre, float rating, int duration, char* certi)
 {    
     Movie* movie;
     movie = (Movie*)malloc(sizeof(Movie));
+
+    strip(certi);
+    strip(genre);
 
     strcpy(movie->title, title);
     strcpy(movie->genre, genre);
@@ -65,11 +75,11 @@ void printMovie(Movie* movie)
 {
     if(movie)
     {
-        printf("\"%s\","     , movie->title);
+        printf("\"%s\",", movie->title);
         printf("%d,"    , movie->year);
-        printf("%s,"    , movie->certi);
-        printf("%s,"    , movie->genre);
+        printf("\"%s\",", movie->certi);
+        printf("\"%s\",", movie->genre);
         printf("%d,"    , movie->duration);
-        printf("%d\n"   , movie->rating);
+        printf("%4.2f\n"   , movie->rating);
     }
 }
