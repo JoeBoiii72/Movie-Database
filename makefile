@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.c Movie.c MovieDatabase.c
+OBJS = main.c Movie.c MovieDatabase.c LinkedList.c
 
 #CC specifies which compiler we're using
 CC = gcc

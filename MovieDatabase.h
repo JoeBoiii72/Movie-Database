@@ -12,28 +12,21 @@ $Notice: $
 #define __MOVIEDATABASE_H__
 
 #include "Movie.h"
+#include "LinkedList.h"
 #include <stdio.h>
-
-typedef struct MovieNode MovieNode;
-typedef struct MovieDatabase MovieDatabase;
 
 struct MovieDatabase
 {
-    MovieNode* head;
-    int        size;
+    LinkedList list;
 };
 
-struct MovieNode
-{
-    MovieNode* next;
-    Movie*     movie;
-};
+typedef struct MovieDatabase MovieDatabase;
 
 MovieDatabase* createMovieDatabase();
 void           addMoviesFromFile(MovieDatabase* mdb, const char* fileName);
-void           freeMovieDataBase(MovieDatabase* mdb);
-void           printMovieDataBase(MovieDatabase* mdb);
-void           sortMovieDatabase(MovieDatabase *mdb);
+void           freeMovieDatabase(MovieDatabase* mdb);
+void           printMovieDatabase(MovieDatabase* mdb);
+void           sortMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*, Movie*));
 MovieDatabase* isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*));
 void           addMovie(MovieDatabase* mdb, Movie* movie);
 Movie*         getMovie(MovieDatabase* mdb, int index);

@@ -9,20 +9,22 @@ $Notice: $
 */
 
 #include "Movie.h"
+#define PRINTLINE() printf("file: %s, line: %d\n",__FILE__, __LINE__ )
+
 
 // constructor
 Movie* 
-createMovie(char* title, int year, char* genre, float rating)
-{
-    Movie* movie = malloc(sizeof(movie));
-
-    movie->title = malloc(sizeof(char) * (strlen(title)+1));
-    movie->genre = malloc(sizeof(char) * (strlen(genre)+1));
+createMovie(char* title, int year, char* genre, int rating, int duration, char* certi)
+{    
+    Movie* movie;
+    movie = (Movie*)malloc(sizeof(Movie));
 
     strcpy(movie->title, title);
     strcpy(movie->genre, genre);
+    strcpy(movie->certi, certi);
 
     movie->year = year;
+    movie->duration = duration;
     movie->rating = rating;
     return movie;
 }
@@ -31,30 +33,30 @@ createMovie(char* title, int year, char* genre, float rating)
 Movie* 
 createMovieCopy(Movie* srcMovie)
 {
-    Movie* movie = malloc(sizeof(movie));
-
-    movie->title = malloc(sizeof(char) * (strlen(srcMovie->title)+1));
-    movie->genre = malloc(sizeof(char) * (strlen(srcMovie->genre)+1));
+    Movie* movie;
+    movie = (Movie*)malloc(sizeof(Movie));
 
     strcpy(movie->title, srcMovie->title);
     strcpy(movie->genre, srcMovie->genre);
+    strcpy(movie->certi, srcMovie->certi);
 
     movie->year = srcMovie->year;
+    movie->duration = srcMovie->duration;
     movie->rating = srcMovie->rating;
     return movie;
 }
 
 // getters, for abstraction
-char* getTitle (Movie* movie){return movie->title; }
-int   getYear  (Movie* movie){return movie->year;  }
-char* getGenre (Movie* movie){return movie->genre; }
-float getRating(Movie* movie){return movie->rating;}
+char* getTitle       (Movie* movie){return movie->title;   }
+int   getYear        (Movie* movie){return movie->year;    }
+char* getGenre       (Movie* movie){return movie->genre;   }
+float getRating      (Movie* movie){return movie->rating;  }
+char* getCertificate (Movie* movie){return movie->certi;   }
+int   getDuration    (Movie* movie){return movie->duration;}
 
 // free the memory we allocated for the movie
 void freeMovie(Movie* movie)
 {
-    free(movie->title);
-    free(movie->genre);
     free(movie);
 }
 
@@ -63,9 +65,11 @@ void printMovie(Movie* movie)
 {
     if(movie)
     {
-        printf("%s,"  , movie->title);
-        printf("%d,"  , movie->year);
-        printf("%s,"  , movie->genre);
-        printf("%f\n" , movie->rating);
+        printf("\"%s\","     , movie->title);
+        printf("%d,"    , movie->year);
+        printf("%s,"    , movie->certi);
+        printf("%s,"    , movie->genre);
+        printf("%d,"    , movie->duration);
+        printf("%d\n"   , movie->rating);
     }
 }

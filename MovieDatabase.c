@@ -8,6 +8,8 @@ $Notice: $
 =======================================
 */
 
+#define PRINTLINE() printf("file: %s, line: %d\n",__FILE__, __LINE__ )
+
 #include "MovieDatabase.h"
 #include "Movie.h"
 #include <stdio.h>
@@ -16,9 +18,8 @@ $Notice: $
 MovieDatabase*
 createMovieDatabase()
 {
-    MovieDatabase* mdb = (MovieDatabase*)malloc(sizeof(MovieDatabase));
-    mdb->head = (MovieNode*)malloc(sizeof(MovieNode));
-    mdb->size = 0;
+    MovieDatabase* mdb = malloc(sizeof(MovieDatabase));
+    mdb->list = create_list();
     return mdb;
 }
 
@@ -43,21 +44,27 @@ void addMoviesFromFile(MovieDatabase* mdb, const char* fileName)
     size_t length;
 
 	while ((length = getline(&line, &ibSize, f)) != -1)
-    {
+    {           
         char* token = strtok(line, "\"");
         char* title = token;
+
         token = strtok(NULL, ",");
         int year = atoi(token);
+
         token = strtok(NULL, ",");
         char* cert = token;
+
         token = strtok(NULL, ",");
         char* genre = token;
+
         token = strtok(NULL, ",");
         int duration = atoi(token);
-        token = strtok(NULL, ",");
-        float rating = atoi(token);
 
-        addMovie(mdb, createMovie(title, year, genre, rating));
+        token = strtok(NULL, ",");
+        int rating = atoi(token);
+
+        Movie* movie = createMovie(title, year, genre, rating, duration, cert);
+        addMovie(mdb, movie);
 	}
 
 	free(line);
@@ -65,120 +72,91 @@ void addMoviesFromFile(MovieDatabase* mdb, const char* fileName)
 }
 
 
-static void
-freeNode(MovieNode* n)
-{
-    freeMovie(n->movie);
-    free(n);
-}
-
 void
-freeMovieDataBase(MovieDatabase* mdb)
+freeMovieDatabase(MovieDatabase* mdb)
 {
-    MovieNode* p = mdb->head;
-
-    while(p->next)
-    {
-        MovieNode* next = p->next;
-        freeNode(p);
-        p = next;
-    }
+    free_list(mdb->list);
     free(mdb);
-
-    printf("Movie Database deleted\n", mdb->size);
 }
 
 void
-printMovieDataBase(MovieDatabase* mdb)
+printMovieDatabase(MovieDatabase* mdb)
 {
-    MovieNode* p = mdb->head;
-
-    printf("--- Movie Database size: %d ---\n", mdb->size);
-
-    while(p->next)
+    LinkedList* list = mdb->list;
+    Node* cur_node = *list;
+    while(cur_node)
     {
-        printMovie(p->movie);
-        p = p->next;
+        Movie* cur_movie = (Movie*)(cur_node)->data;
+        printMovie(cur_movie);
+        cur_node = cur_node->next;
     }
-
-    printf("--------\n");
 }
 
 void
 addMovie(MovieDatabase* mdb, Movie* movie)
-{
-    MovieNode* n = (MovieNode*)malloc(sizeof(MovieNode));
-    n->next  = mdb->head;
-    n->movie = movie;
-    mdb->head = n;
-    mdb->size++;
+{    
+    add_data(mdb->list, (void*)movie);
 }
 
-Movie*
-getMovie(MovieDatabase* mdb, int index)
-{
-    if(index >= mdb->size)
-        return 0;
-
-    MovieNode* p = mdb->head;
-
-    int cur_index = 0;
-    while(p && cur_index != index)
-    {
-        cur_index++;
-        p = p->next;
-    }
-
-    return p->movie;
-}
+//Movie*
+//getMovie(MovieNode* mdb, int index)
+//{
+//}
 
 MovieDatabase*
 isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*))
 {
     MovieDatabase* new_mdb = createMovieDatabase();
 
-    MovieNode* p = mdb->head;
-    while(p->next)
+    LinkedList* list = mdb->list;
+    Node* cur_node = *list;
+
+    while(cur_node)
     {
-        if(comp(p->movie) != 0)
+        Movie* cur_movie = (Movie*)(cur_node)->data;
+        if(comp(cur_movie) != 0)
         {
             // so new_mdb doesnt rely on old one
-            Movie* new_movie = createMovieCopy(p->movie);
+            Movie* new_movie = createMovieCopy(cur_movie);
             addMovie(new_mdb, new_movie);
         }
-        p = p->next;
+        cur_node = cur_node->next;
     }
+
     return new_mdb;
 }
 
 
 static int
-compareFunction(MovieNode* p1, MovieNode* p2)
+defaultCompare(Movie* p1, Movie* p2)
 {
-    return(p1->movie->year > p2->movie->year);
+    return (p1->year > p2->year);
 }
 
 static void
-swapNodes(MovieNode* p1, MovieNode* p2) 
+swapNodes(Node* p1, Node* p2)
 { 
-    Movie* movie = p1->movie;
-    p1->movie = p2->movie; 
-    p2->movie = movie;
-} 
+    Movie* movie = (Movie*)p1->data;
+    p1->data = (Movie*)p2->data; 
+    p2->data = movie;
+}
 
 void
-sortMovieDatabase(MovieDatabase *mdb)
+sortMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*, Movie*))
 { 
-    MovieNode* curr = mdb->head;
-    MovieNode* next;
+    if(!comp)
+        comp = defaultCompare;
+
+    LinkedList* list = mdb->list;
+    Node* curr = *list;
 
     while(curr->next)
     {
-        MovieNode* next = curr->next;
+        Node* next = curr->next;
 
-        while(next->next)
+        while(next)
         {
-            if (compareFunction(curr, next)!=0)
+            if (comp((Movie*)curr->data, (Movie*)next->data)!=0)
             {
                 swapNodes(next, curr);
             }

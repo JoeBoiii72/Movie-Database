@@ -16,17 +16,22 @@ typedef struct Movie Movie;
 struct Movie
 {
     int year;
-    float rating;
-    char* title;
-    char* genre;
+    int rating; 
+    int duration;
+    char genre[120];
+    char title[120];
+    char certi[120];
+    
 };
 
-Movie* createMovie(char* title, int year, char* genre, float rating);
+Movie* createMovie(char* title, int year, char* genre, int rating, int duration, char* certi);
 Movie* createMovieCopy(Movie* srcMovie);
 void   freeMovie(Movie* movie);
 char*  getTitle(Movie* movie);
 int    getYear(Movie* movie);
 char*  getGenre(Movie* movie);
+char*  getCertificate(Movie* movie);
+int    getDuration(Movie* movie);
 float  getRating(Movie* movie);
 void   printMovie(Movie* movie);
 

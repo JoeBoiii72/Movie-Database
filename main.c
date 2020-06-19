@@ -11,27 +11,69 @@ $Notice: $
 #include "Movie.h"
 #include "MovieDatabase.h"
 
-int only_2010_or_larger(Movie* movie)
+int only_film_noir(Movie* movie)
 {
-    return (getYear(movie) >= 2010);
+    return strstr(getGenre(movie), "Film-Noir");
+}
+
+int sortByDuration(Movie* movie1, Movie* movie2)
+{
+    return (getDuration(movie1) < getDuration(movie2));
+}
+
+int sortByTitleLength(Movie* movie1, Movie* movie2)
+{
+    return (strlen(getTitle(movie1)) > strlen(getTitle(movie2)));
+}
+
+/*
+Sort the movies in chronological order and display on the console.
+*/
+void task1()
+{
+}
+
+/*
+Display the third longest Film-Noir
+*/
+void task2()
+{
+}
+
+/*
+Find the film with the shortest title.
+*/
+void task3()
+{
+}
+
+/*
+After deleting all R rated films from the database, display the number of
+films left in the database
+*/
+void task4()
+{
 }
 
 int main()
 {
-
     MovieDatabase* mdb = createMovieDatabase();
 
     addMoviesFromFile(mdb, "films.txt");
 
-    sortMovieDatabase(mdb);
+    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, only_film_noir);
 
-    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, only_2010_or_larger);
+    printMovieDatabase(new_mdb);
 
-    freeMovieDataBase(mdb);
+    sortMovieDatabase(new_mdb, NULL);
 
-    printMovieDataBase(new_mdb);
+    printf("------------------\n");
 
-    freeMovieDataBase(new_mdb);
+    printMovieDatabase(new_mdb);
+
+    freeMovieDatabase(mdb);
+
+    freeMovieDatabase(new_mdb);
 
     return 0;
 }
