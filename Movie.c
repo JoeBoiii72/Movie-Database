@@ -67,19 +67,17 @@ int   getDuration    (Movie* movie){return movie->duration;}
 // free the memory we allocated for the movie
 void freeMovie(Movie* movie)
 {
-    free(movie);
+   free(movie);
 }
 
 // print like we see in films.txt
-void printMovie(Movie* movie)
+void printMovie(void* data)
 {
-    if(movie)
-    {
-        printf("\"%s\",", movie->title);
-        printf("%d,"    , movie->year);
-        printf("\"%s\",", movie->certi);
-        printf("\"%s\",", movie->genre);
-        printf("%d,"    , movie->duration);
-        printf("%4.2f\n"   , movie->rating);
-    }
+    Movie* movie = (Movie*)data;
+    printf("\"%s\",", movie->title);
+    printf("%d,"    , movie->year);
+    printf("\"%s\",", movie->certi);
+    printf("\"%s\",", movie->genre);
+    printf("%d,"    , movie->duration);
+    printf("%4.2f\n"   , movie->rating);
 }

@@ -11,19 +11,54 @@ $Notice: $
 #ifndef __LINKED_LIST__H_
 #define __LINKED_LIST__H_
 
-struct node_t
-{
-  void*          data;
-  struct node_t* next;
-};
+#include "stddef.h"
+
 
 typedef struct node_t node_t;
+typedef struct List List;
 
-node_t*   create_list();
-void      add_data(node_t** head, void* data);
-void      free_list(node_t** head);
-void      for_each(node_t** head, void(*func)(void*));
-void      sort_list(node_t** head, int(*comp)(void*, void*));
-void      remove_node(node_t** prev_node, node_t** node);
+struct node_t
+{
+  void*   data;
+  node_t* next;
+  node_t* (*getNext)(node_t*);
+  node_t* (*getData)(node_t*);
+  void    (*setData)(node_t*, void*);
+  void    (*setNext)(node_t*, node_t*);
+};
+
+struct List
+{
+  node_t* head;
+  size_t  size;
+  void    (*push  )(List*, void*);
+  void*   (*get   )(List*, int  );
+  void    (*remove)(List*, int  );
+  void    (*free  )(List*       );
+  void    (*sort  )(List*, int(*comp)(void*, void*));
+  void    (*print )(List*, void(*func)(void*));
+  node_t* (*createNode)(void*);
+  node_t* (*getHead)(List*);
+  node_t* (*getSize)(List*);
+};
+
+List    create_list();
+
+// list functions
+void    ll_push      (List* this, void* data);
+void*   ll_get       (List* this, int index);
+void    ll_remove    (List* this, int index);
+void    ll_free      (List* this);
+void    ll_sort      (List* this, int(*comp)(void*, void*));
+void    ll_print     (List*, void(*func)(void*));
+node_t* ll_createNode(void* data);
+node_t* ll_getHead   (List* this);
+size_t  ll_getSize   (List* this);
+
+// node functions
+node_t* ll_getNext   (node_t* this);
+void*   ll_getData   (node_t* this);
+void    ll_setData   (node_t* this, void* data);
+void    ll_setNext   (node_t* this, node_t* next);
 
 #endif

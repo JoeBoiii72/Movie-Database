@@ -15,22 +15,66 @@ $Notice: $
 #include "LinkedList.h"
 #include <stdio.h>
 
+typedef struct MovieDatabase MovieDatabase;
+
 struct MovieDatabase
 {
     size_t size;
-    node_t* head;
+    List   list;
+    void          (*add )(MovieDatabase*, Movie*);
+    void          (*add_from_file)(MovieDatabase*, const char*);
+    Movie*        (*get)(MovieDatabase*, int);
+    MovieDatabase (*copy)(MovieDatabase*);
+    void          (*free)(MovieDatabase*);
+    void          (*sort)(MovieDatabase*, int(*comp)(void*, void*));
+    void          (*print)(MovieDatabase*);
+    void          (*remove)(MovieDatabase*, int(*comp)(void*));
 };
 
-typedef struct MovieDatabase MovieDatabase;
 
-MovieDatabase* createMovieDatabase();
-void           addMoviesFromFile(MovieDatabase* mdb, const char* fileName);
-void           freeMovieDatabase(MovieDatabase* mdb);
-void           printMovieDatabase(MovieDatabase* mdb);
-void           sortMovieDatabase(MovieDatabase *mdb, int(*comp)(void*, void*));
-MovieDatabase* isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*));
-void           addMovie(MovieDatabase* mdb, Movie* movie);
-Movie*         getMovieByIndex(MovieDatabase* mdb, int index);
-void           removeMovies(MovieDatabase *mdb, int(*comp)(Movie*));
+
+/*
+
+*/
+MovieDatabase create_movie_database();
+
+/*
+
+*/
+void mdb_add_from_file(MovieDatabase* mdb, const char* fileName);
+
+/*
+*/
+MovieDatabase mdb_copy(MovieDatabase* mdb);
+
+/*
+
+*/
+void mdb_free(MovieDatabase* mdb);
+
+/*
+
+*/
+void mdb_print(MovieDatabase* mdb);
+
+/*
+
+*/
+void mdb_sort(MovieDatabase *mdb, int(*comp)(void*, void*));
+
+/*
+
+*/
+void mdb_add(MovieDatabase* mdb, Movie* movie);
+
+/*
+
+*/
+Movie* mdb_get(MovieDatabase* mdb, int index);
+
+/*
+
+*/
+void mdb_remove(MovieDatabase* mdb, int(*comp)(void*));
 
 #endif

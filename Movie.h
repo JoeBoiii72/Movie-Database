@@ -32,6 +32,6 @@ char*  getGenre(Movie* movie);
 char*  getCertificate(Movie* movie);
 int    getDuration(Movie* movie);
 float  getRating(Movie* movie);
-void   printMovie(Movie* movie);
+void   printMovie(void* movie);
 
 #endif

@@ -15,16 +15,58 @@ $Notice: $
 #include <stdio.h>
 #include <string.h>
 
-MovieDatabase*
-createMovieDatabase()
+#define TRUE  !0
+#define FALSE !TRUE
+
+// constructor
+MovieDatabase
+create_movie_database()
 {
-    MovieDatabase* mdb = malloc(sizeof(MovieDatabase));
-    mdb->head = create_list();
-    mdb->size = 0;
+    MovieDatabase mdb;
+    mdb.size = 0;
+    mdb.list = create_list();
+
+    mdb.add           = &mdb_add;
+    mdb.copy          = &mdb_copy;
+    mdb.add_from_file = &mdb_add_from_file;
+    mdb.get           = &mdb_get;
+    mdb.remove        = &mdb_remove;
+    mdb.free          = &mdb_free;
+    mdb.sort          = &mdb_sort;
+    mdb.print         = &mdb_print;
     return mdb;
 }
 
-void addMoviesFromFile(MovieDatabase* mdb, const char* fileName)
+// copy constructor
+MovieDatabase
+mdb_copy(MovieDatabase* mdb)
+{
+    MovieDatabase copy_mdb = create_movie_database();
+    node_t* cur_node = mdb->list.head;
+
+    while(cur_node)
+    {
+        copy_mdb.add(&copy_mdb, createMovieCopy((Movie*)cur_node->data));
+        cur_node = cur_node->next;
+    }
+    return copy_mdb;
+}
+
+void
+mdb_add(MovieDatabase* mdb, Movie* movie)
+{    
+    mdb->list.push(&(mdb->list), (void*)movie);
+    mdb->size--;
+}
+
+void
+mdb_free(MovieDatabase* mdb)
+{
+    mdb->list.free(&(mdb->list));
+}
+
+void
+mdb_add_from_file(MovieDatabase* mdb, const char* fileName)
 {
 	FILE* f;
     
@@ -61,61 +103,19 @@ void addMoviesFromFile(MovieDatabase* mdb, const char* fileName)
 
         token = strtok(NULL, ",");
         float rating = atoi(token);
-
-        Movie* movie = createMovie(title, year, genre, rating, duration, cert);
-        addMovie(mdb, movie);
+        
+        // add movie
+        mdb->add(mdb, createMovie(title, year, genre, rating, duration, cert));
 	}
 
     free(line);
 	fclose(f);
 }
 
-
-void
-freeMovieDatabase(MovieDatabase* mdb)
+void mdb_print(MovieDatabase* mdb)
 {
-    free_list(&(mdb->head));
+    mdb->list.print(&(mdb->list), printMovie);
 }
-
-static void
-printNode(node_t* node)
-{
-    printMovie((Movie*)node->data);
-}
-
-void
-printMovieDatabase(MovieDatabase* mdb)
-{
-    for_each(&(mdb->head), printNode);
-}
-
-void
-addMovie(MovieDatabase* mdb, Movie* movie)
-{    
-    mdb->size++;
-    add_data(&(mdb->head), (void*)movie);
-}
-
-MovieDatabase*
-isolateMovieDatabase(MovieDatabase *mdb, int(*comp)(Movie*))
-{
-    MovieDatabase* new_mdb = createMovieDatabase();
-    node_t* cur_node = mdb->head;
-
-    while(cur_node)
-    {
-        Movie* cur_movie = (Movie*)(cur_node)->data;
-        if(comp(cur_movie) != 0)
-        {
-            // so new_mdb doesnt rely on old one
-            Movie* new_movie = createMovieCopy(cur_movie);
-            addMovie(new_mdb, new_movie);
-        }
-        cur_node = cur_node->next;
-    }
-    return new_mdb;
-}
-
 
 static int
 defaultCompare(void* p1, void* p2)
@@ -126,45 +126,40 @@ defaultCompare(void* p1, void* p2)
 }
 
 void
-sortMovieDatabase(MovieDatabase *mdb, int(*comp)(void*, void*))
-{ 
+mdb_sort(MovieDatabase* mdb, int(*comp)(void*, void*))
+{
     if(!comp)
-        comp = defaultCompare;
-
-    sort_list(&(mdb->head), comp);
+        mdb->list.sort(&(mdb->list), defaultCompare);
+    else
+        mdb->list.sort(&(mdb->list), comp);
 }
 
-Movie* getMovieByIndex(MovieDatabase *mdb, int index)
+Movie* mdb_get(MovieDatabase *mdb, int index)
 {
-    node_t* cur_node = mdb->head;
-    int cur_index = 0;
-
-    while(cur_node && cur_index++ != index)
-        cur_node = cur_node->next;
-
-    return (Movie*)(cur_node)->data;
+    void* m = mdb->list.get(&(mdb->list), index);
+    return (Movie*)m;
 }
 
-void removeMovies(MovieDatabase *mdb, int(*comp)(Movie*))
+void mdb_remove(MovieDatabase *mdb, int(*comp)(void*))
 {
-    node_t* curr_node  = mdb->head;
-    node_t* prev_node  = 0;
-    while(curr_node)
+    node_t* prev = NULL;
+    node_t* curr = mdb->list.head;
+    while (curr)
     {
-        Movie* cur_movie = (Movie*)(curr_node)->data;
-        node_t* next_node = curr_node->next;
-        if(comp(cur_movie) != 0)
+        node_t* next = curr->next;
+        if(comp(curr->data) == TRUE)
         {
-            free(curr_node->data);
-            free(curr_node);
-            if(prev_node)
-                prev_node->next = next_node;
+            if(!prev)
+                mdb->list.head = next;
             else
-                mdb->head = next_node;
+                prev->next = next;
+
+            free(curr->data);
+            free(curr);
             mdb->size--;
         }
         else
-            prev_node = curr_node;
-        curr_node = next_node;
+            prev = curr;
+        curr = curr->next;
     }
 }

@@ -11,9 +11,10 @@ $Notice: $
 #include "Movie.h"
 #include "MovieDatabase.h"
 
-int if_film_noir(Movie* movie)
+int if_not_film_noir(void* p)
 {
-    return strstr(getGenre(movie), "Film-Noir");
+    Movie* m = (Movie*)p;
+    return !strstr(m->genre, "Film-Noir");
 }
 
 int if_R_rated(Movie* movie)
@@ -40,8 +41,8 @@ Sort the movies in chronological order and display on the console.
 */
 void task1(MovieDatabase* mdb)
 {
-    sortMovieDatabase(mdb, NULL);
-    printMovieDatabase(mdb);
+    mdb->sort(mdb, NULL);
+    mdb->print(mdb);
     printf("\n");
 }
 
@@ -50,9 +51,12 @@ Display the third longest Film-Noir
 */
 void task2(MovieDatabase* mdb)
 {
-    MovieDatabase* new_mdb = isolateMovieDatabase(mdb, if_film_noir);
-    sortMovieDatabase(new_mdb, sortByDuration);
-    printMovie(getMovieByIndex(new_mdb, 2));
+    
+    MovieDatabase new_mdb = mdb->copy(mdb);
+    new_mdb.remove(&new_mdb, if_not_film_noir);
+    new_mdb.sort(&new_mdb, sortByDuration);
+    printMovie(new_mdb.get(&new_mdb, 2));
+    new_mdb.free(&new_mdb);
     printf("\n");
 }
 
@@ -61,8 +65,8 @@ Find the film with the shortest title.
 */
 void task3(MovieDatabase* mdb)
 {
-    sortMovieDatabase(mdb, sortByTitleLength);
-    printMovie(getMovieByIndex(mdb, 0));
+    mdb->sort(mdb, sortByTitleLength);
+    printMovie(mdb->get(mdb, 0));
     printf("\n");
 }
 
@@ -73,23 +77,23 @@ films left in the database
 void task4(MovieDatabase* mdb)
 {
     printf("Movies left BEFORE deletion -> %d\n", mdb->size);
-    removeMovies(mdb, if_R_rated);
+    mdb->remove(mdb, if_R_rated);
     printf("Movies left AFTER deletion -> %d\n", mdb->size);
     printf("\n");
 }
 
 int main()
 {    
-    MovieDatabase* mdb = createMovieDatabase();
+    MovieDatabase mdb = create_movie_database();
 
-    addMoviesFromFile(mdb, "films.txt");
+    mdb.add_from_file(&mdb, "films.txt");
 
-    task1(mdb);
-    task2(mdb);
-    task3(mdb);
-    task4(mdb);
+    task1(&mdb);
+    task2(&mdb);
+    task3(&mdb);
+    task4(&mdb);
 
-    freeMovieDatabase(mdb);
+    mdb.free(&mdb);
 
     return 0;
 }
