@@ -21,16 +21,19 @@ struct node_t
 {
   void*   data;
   node_t* next;
-  node_t* (*getNext)(node_t*);
-  node_t* (*getData)(node_t*);
-  void    (*setData)(node_t*, void*);
-  void    (*setNext)(node_t*, node_t*);
+  // not using this shit
+  /*
+  node_t* (*getNext)(node_t**);
+  node_t* (*getData)(node_t**);
+  void    (*setData)(node_t**, void*);
+  void    (*setNext)(node_t**, node_t**);
+  void    (*iterate)(node_t**);
+  */
 };
 
 struct List
 {
   node_t* head;
-  size_t  size;
   void    (*push  )(List*, void*);
   void*   (*get   )(List*, int  );
   void    (*remove)(List*, int  );
@@ -39,7 +42,6 @@ struct List
   void    (*print )(List*, void(*func)(void*));
   node_t* (*createNode)(void*);
   node_t* (*getHead)(List*);
-  node_t* (*getSize)(List*);
 };
 
 List    create_list();
@@ -55,10 +57,13 @@ node_t* ll_createNode(void* data);
 node_t* ll_getHead   (List* this);
 size_t  ll_getSize   (List* this);
 
+
 // node functions
-node_t* ll_getNext   (node_t* this);
-void*   ll_getData   (node_t* this);
-void    ll_setData   (node_t* this, void* data);
-void    ll_setNext   (node_t* this, node_t* next);
+/*
+node_t* ll_getNext   (node_t** this);
+void*   ll_getData   (node_t** this);
+void    ll_setData   (node_t** this, void* data);
+void    ll_setNext   (node_t** this, node_t** next);
+void    ll_iterate   (node_t** this);*/
 
 #endif

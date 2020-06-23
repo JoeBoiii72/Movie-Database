@@ -22,13 +22,14 @@ struct MovieDatabase
     size_t size;
     List   list;
     void          (*add )(MovieDatabase*, Movie*);
-    void          (*add_from_file)(MovieDatabase*, const char*);
+    void          (*addFromFile)(MovieDatabase*, const char*);
     Movie*        (*get)(MovieDatabase*, int);
     MovieDatabase (*copy)(MovieDatabase*);
     void          (*free)(MovieDatabase*);
     void          (*sort)(MovieDatabase*, int(*comp)(void*, void*));
     void          (*print)(MovieDatabase*);
     void          (*remove)(MovieDatabase*, int(*comp)(void*));
+    size_t        (*getSize)(MovieDatabase*)
 };
 
 
@@ -41,7 +42,7 @@ MovieDatabase create_movie_database();
 /*
 
 */
-void mdb_add_from_file(MovieDatabase* mdb, const char* fileName);
+void mdb_addFromFile(MovieDatabase* mdb, const char* fileName);
 
 /*
 */
@@ -76,5 +77,10 @@ Movie* mdb_get(MovieDatabase* mdb, int index);
 
 */
 void mdb_remove(MovieDatabase* mdb, int(*comp)(void*));
+
+/*
+
+*/
+size_t mdb_getSize(MovieDatabase* mdb);
 
 #endif

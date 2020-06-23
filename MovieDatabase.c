@@ -28,12 +28,13 @@ create_movie_database()
 
     mdb.add           = &mdb_add;
     mdb.copy          = &mdb_copy;
-    mdb.add_from_file = &mdb_add_from_file;
+    mdb.addFromFile   = &mdb_addFromFile;
     mdb.get           = &mdb_get;
     mdb.remove        = &mdb_remove;
     mdb.free          = &mdb_free;
     mdb.sort          = &mdb_sort;
     mdb.print         = &mdb_print;
+    mdb.getSize       = &mdb_getSize;
     return mdb;
 }
 
@@ -42,7 +43,7 @@ MovieDatabase
 mdb_copy(MovieDatabase* mdb)
 {
     MovieDatabase copy_mdb = create_movie_database();
-    node_t* cur_node = mdb->list.head;
+    node_t* cur_node = mdb->list.getHead(&(mdb->list));
 
     while(cur_node)
     {
@@ -56,7 +57,7 @@ void
 mdb_add(MovieDatabase* mdb, Movie* movie)
 {    
     mdb->list.push(&(mdb->list), (void*)movie);
-    mdb->size--;
+    mdb->size++;
 }
 
 void
@@ -66,7 +67,7 @@ mdb_free(MovieDatabase* mdb)
 }
 
 void
-mdb_add_from_file(MovieDatabase* mdb, const char* fileName)
+mdb_addFromFile(MovieDatabase* mdb, const char* fileName)
 {
 	FILE* f;
     
@@ -143,7 +144,7 @@ Movie* mdb_get(MovieDatabase *mdb, int index)
 void mdb_remove(MovieDatabase *mdb, int(*comp)(void*))
 {
     node_t* prev = NULL;
-    node_t* curr = mdb->list.head;
+    node_t* curr = mdb->list.getHead(&(mdb->list));
     while (curr)
     {
         node_t* next = curr->next;
@@ -156,10 +157,16 @@ void mdb_remove(MovieDatabase *mdb, int(*comp)(void*))
 
             free(curr->data);
             free(curr);
+
             mdb->size--;
         }
         else
             prev = curr;
         curr = curr->next;
     }
+}
+
+size_t mdb_getSize(MovieDatabase* mdb)
+{
+    return mdb->size;
 }

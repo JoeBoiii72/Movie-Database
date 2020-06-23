@@ -15,7 +15,6 @@ create_list()
 {
     List list;
     list.head = 0;
-    list.size = 0;
 
     list.push   = &ll_push;
     list.get    = &ll_get;
@@ -25,7 +24,6 @@ create_list()
     list.print  = &ll_print;
     list.createNode = &ll_createNode;
     list.getHead    = &ll_getHead;
-    list.getSize    = &ll_getSize;
     
     return list;
 }
@@ -38,8 +36,6 @@ ll_push(List* this, void* data)
     // create node
     node_t* node = malloc(sizeof(node_t));
     node->data   = data;
-
-    this->size++;
 
     // add to first node if no data there
     if(! this->head){
@@ -83,7 +79,6 @@ ll_remove(List* this, int index)
                 prev_node->next = next_node;
             else
                 this->head = next_node;
-            this->size--;
             return;
         }
         else
@@ -155,43 +150,13 @@ ll_sort(List* this, int(*comp)(void*, void*))
     }
 }
 
-
 node_t* ll_getHead(List* list)
 {
     return list->head;
-}
-
-size_t ll_getSize(List* list)
-{
-    return list->size;
 }
 
 node_t* ll_createNode(void* data)
 {
     node_t* node  = malloc(sizeof(node_t));
     node->data    = data;
-    node->getData = &ll_getData;
-    node->getNext = &ll_getNext;
-    node->setData = &ll_setData;
-    node->setNext = &ll_setNext;
-}
-
-node_t* ll_getNext(node_t* this)
-{
-    return this->next;
-}
-
-void* ll_getData(node_t* this)
-{
-    return this->data;
-}
-
-void ll_setData(node_t* this, void* data)
-{
-    this->data = data;
-}
-
-void ll_setNext(node_t* this, node_t* next)
-{
-    this->next = next;
 }

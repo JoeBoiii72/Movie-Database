@@ -76,9 +76,9 @@ films left in the database
 */
 void task4(MovieDatabase* mdb)
 {
-    printf("Movies left BEFORE deletion -> %d\n", mdb->size);
+    printf("Movies left BEFORE deletion -> %d\n", mdb->getSize(mdb));
     mdb->remove(mdb, if_R_rated);
-    printf("Movies left AFTER deletion -> %d\n", mdb->size);
+    printf("Movies left AFTER deletion -> %d\n", mdb->getSize(mdb));
     printf("\n");
 }
 
@@ -86,7 +86,7 @@ int main()
 {    
     MovieDatabase mdb = create_movie_database();
 
-    mdb.add_from_file(&mdb, "films.txt");
+    mdb.addFromFile(&mdb, "films.txt");
 
     task1(&mdb);
     task2(&mdb);
